@@ -1,0 +1,15 @@
+======================================
+//   
+// new generation of NFK modelz
+// 3dsmax animated
+//
+======================================
+//
+// Model: Doom
+// Skins: red, blue, default, phobos, green, magenta
+// From: Quake III Arena
+// Author: Tarakan
+// mailto: tarakan@atknet.ru    tarakan-nfk@mail.ru  
+// This model is for nfk060 or better
+// 
+======================================
