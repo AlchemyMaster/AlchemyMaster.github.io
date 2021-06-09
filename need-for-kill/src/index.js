@@ -106,15 +106,17 @@ function drawMap(map, res, player) {
 }
 
 async function main() {
+	const resourcesDir = ( /127|local/i.test(location.hostname) ) ? './' : './resources/'
+		
 	const map = new Map()
-	await map.load('./basenfk/maps/dm13-test.mapa')
+	await map.load( `${ resourcesDir }basenfk/maps/dm13-test.mapa `)
 	
 	const resources = new ResourcesD()
-	await resources.load('./basenfk/system/graph.d')
-	await resources.load('./basenfk/system/graph2.d')	
+	await resources.load(`${ resourcesDir }basenfk/system/graph.d`)
+	await resources.load(`${ resourcesDir }basenfk/system/graph2.d`)	
 	
 	const playerModel = new PlayerModel()
-	await playerModel.load('./basenfk/models/doom/dark.nmdl')
+	await playerModel.load(`${ resourcesDir }basenfk/models/doom/dark.nmdl`)
 
 	const player = new Player(playerModel)
 	
