@@ -14,7 +14,7 @@ export class SpriteGridAnim {
 		
 		const frame = ( ((now - this.startTime) / 1e3) * this.framesPerSec ) | 0
 		
-		this.spriteGrid.draw(ctx, x, y, frame)
+		this.spriteGrid.draw(ctx, frame, x, y)
 	}
 	drawEx(ctx, x, y, w, h) {
 		const now = Date.now()

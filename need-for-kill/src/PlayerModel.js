@@ -144,30 +144,4 @@ export class PlayerModel {
 		}
 	}
 	
-	draw(ctx) {
-		return
-		const now = Date.now()
-		const frameTime = now - this.prevFrameTime
-		this.prevFrameTime = now
-		
-		const aniTime = now - this.startAniTime
-
-		const aniIndex = (aniTime / (this.ani.frameRefreshTime * 15)) | 0
-		this.prevAniIndex = this.prevAniIndex ?? aniIndex
-		
-		if ( this.prevAniIndex !== aniIndex ) {
-			this.prevAniIndex = aniIndex
-		//	console.log(aniIndex  % this.walkFramesList.length )
-		}
-		
-		//const x = (aniIndex * this.modelSizeX) % this.walkTex.width
-		const x = this.ani.framesList[ aniIndex % this.ani.framesList.length ]
-		
-		ctx.drawImage(
-			this.ani.texture, 
-			x, 0, this.ani.sizeX, this.ani.texture.height, 
-			100, 100, this.ani.sizeX, this.ani.sizeY
-		)
-		//ctx.drawImage(this.walkTex, 100, 100, 0, 0, this.modelSizeX, this.walkTex.height)
-	}
 }
