@@ -4,17 +4,19 @@ import { parse } from './lib/ini/index.js'
 import { RectTexture } from './Classes/Rect.js'
 import { getAbsPath } from './PathMgr.js'
 
+const _loadImageEx = path => loadImageEx(getAbsPath(path))
+
 export class PlayerModel {
 	keysFull = ['walk', 'die', 'crouch', 'walkPower', 'crouchPower',]
 	async load(path) {
 		const text = await fetchText(getAbsPath(path))
 		const iniData = parse( text )
 		
-		this.dieTexPath = getAbsPath( getDirname(path) + '/' + iniData.main.diebmp )
-		this.walkTexPath = getAbsPath( getDirname(path) + '/' + iniData.main.walkbmp )
-		this.crouchTexPath = getAbsPath( getDirname(path) + '/' + iniData.main.crouchbmp )
-		this.walkPowerTexPath = getAbsPath( getDirname(path) + '/' + iniData.main.walkpowerbmp )
-		this.crouchPowerTexPath = getAbsPath( getDirname(path) + '/' + iniData.main.crouchpowerupbmp )
+		this.dieTexPath = ( getDirname(path) + '/' + iniData.main.diebmp )
+		this.walkTexPath = ( getDirname(path) + '/' + iniData.main.walkbmp )
+		this.crouchTexPath = ( getDirname(path) + '/' + iniData.main.crouchbmp )
+		this.walkPowerTexPath = ( getDirname(path) + '/' + iniData.main.walkpowerbmp )
+		this.crouchPowerTexPath = ( getDirname(path) + '/' + iniData.main.crouchpowerupbmp )
 
         this.version = +iniData.main.version
         this.name = iniData.main.name 
@@ -24,7 +26,7 @@ export class PlayerModel {
 			startFrame : +iniData.main.walkstartframe,
 			frames     : +iniData.main.walkframes,
 			refreshTime: +iniData.main.framerefreshtime,
-			texture    : await loadImageEx(this.walkTexPath),
+			texture    : await _loadImageEx(this.walkTexPath),
 		}
 		
 		const correctProp = prop => {
@@ -45,7 +47,7 @@ export class PlayerModel {
 			
 			const texFileName = iniData.main[ correctProp( (key + 'bmp').toLowerCase() ) ]
 			const texPath = getDirname(path) + '/' + texFileName
-			this[key].texture = await loadImageEx(texPath)
+			this[key].texture = await _loadImageEx(texPath)
 		}
 		
 		keys.map(key => {
@@ -65,11 +67,11 @@ export class PlayerModel {
 
 		this.walkPower = { 
 			...this.walk,
-			texture: await loadImageEx( getDirname(path) + '/' + iniData.main.walkpowerbmp ),
+			texture: await _loadImageEx( getDirname(path) + '/' + iniData.main.walkpowerbmp ),
 		}
 		this.crouchPower = { 
 			...this.crouch,
-			texture: await loadImageEx( getDirname(path) + '/' + iniData.main.crouchpowerupbmp ),
+			texture: await _loadImageEx( getDirname(path) + '/' + iniData.main.crouchpowerupbmp ),
 		}
 		
 		for(const key of this.keysFull) {
