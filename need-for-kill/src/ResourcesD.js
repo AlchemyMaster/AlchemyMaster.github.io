@@ -3,6 +3,7 @@ import { decompress } from './lib/bzip/index.js'
 import { fetchUint8Array, fetchText, getDirname, loadImageEx, createCanvasCtx } from './Utils/Utils.js'
 import { MemoryRW } from './Classes/MemoryRW.js'
 import { Inflate } from './lib/zlibjs/inflate.js'
+import { getAbsPath } from './PathMgr.js'
 
 export async function parseFileD(buf) {
 	const mrw = new MemoryRW(buf.buffer)
@@ -87,7 +88,7 @@ export async function parseFileD(buf) {
 
 export class ResourcesD extends Map {
 	async load(path) {
-		[...await parseFileD( await fetchUint8Array(path) )]
+		[...await parseFileD( await fetchUint8Array(getAbsPath(path)) )]
 			.map(([key, val]) => {
 				if ( this.has(key) )
 					console.log(`Resource '${ key }' in d file '${ path }' already exists`)

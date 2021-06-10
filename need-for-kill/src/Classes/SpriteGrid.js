@@ -1,7 +1,7 @@
 
 import { RectTexture } from './Rect.js'
 import { Sprite } from './Sprite.js'
-import { drawSprite } from '../Render.js'
+import { drawSprite, drawSpriteCX } from '../Render.js'
 
 export class SpriteGrid {
 	frames = []
@@ -23,7 +23,7 @@ export class SpriteGrid {
 	draw(ctx, index, dx, dy) {
 		const sprite = this.frames[ index % this.frames.length ]
 		
-		drawSprite(sprite, dx, dy, sprite.width, sprite.height)
+		drawSprite(sprite, dx, dy)
 		return
 		ctx.drawImage(
 			frame.texture,
@@ -43,9 +43,21 @@ export class SpriteGrid {
 		)
 	}
 	
-	slice(iStart, iEnd) {
+	drawCX(index, cx, dy) {
+		const sprite = this.frames[ index % this.frames.length ]
+		
+		drawSpriteCX(sprite, cx, dy)
+	}
+	
+	slice(iStart = 0, iEnd = 1e9) {
 		const clone = new SpriteGrid(this.texture, 1e9, 1e9, 0, 0)
 		clone.frames = this.frames.slice(iStart, iEnd)
+		return clone
+	}
+	
+	concat(spriteGrid) {
+		const clone = this.slice()
+		clone.frames.push(...spriteGrid.slice().frames)
 		return clone
 	}
 }

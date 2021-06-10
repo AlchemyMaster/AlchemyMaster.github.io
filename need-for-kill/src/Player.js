@@ -5,7 +5,7 @@ import * as vec2 from './lib/glmatrix/vec2.js'
 import { IDPlayer, IDBrick, IDItem } from './ObjectID.js'
 import { BBox } from './Classes/BBox.js'
 import { getCollisions, getCollisionsBBox } from './GameObjectMgr.js'
-
+import { playSound } from './SoundMgr.js'
 
 const PLAYER_STATE_IDLE       = 0b1
 const PLAYER_STATE_MOVE       = 0b10
@@ -67,6 +67,9 @@ export class Player extends GameObject {
 	
 	ani = null
 	stopAni = true
+	
+	hp = 100
+	armor = 0
 
 	constructor(playerModel) {
 		const x = 32*6
@@ -157,7 +160,7 @@ export class Player extends GameObject {
 		bbox.max[0] = pos[0] + 10
 		bbox.min[1] = pos[1]
 		
-		const height = ( forceStanding || !(this.state & PLAYER_STATE.Crouch) ) ? 40 : 30
+		const height = ( forceStanding || !(this.state & PLAYER_STATE.Crouch) ) ? 47 : 31
 		bbox.max[1] = pos[1] + height		
 	}
 	updateBBox() {

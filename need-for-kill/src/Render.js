@@ -55,4 +55,8 @@ export const updateFrameTime = () => {
 	frameDeltaTimeSec = frameDeltaTime / 1e3
 }
 
+export const setTimeout = (callback, timeout) => {
+	globalThis.setTimeout(callback, timeout)
+}
+
 globalThis.devDrawRect = devDrawRect

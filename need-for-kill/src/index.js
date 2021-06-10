@@ -12,68 +12,79 @@ import { GameObject } from './GameObject.js'
 import { IDBrick, IDItem, IDPlayer } from './ObjectID.js'
 import { Brick } from './Brick.js'
 import { Item } from './Item.js'
+import { Ammo } from './Ammo.js'
+import { Weapon } from './Weapon.js'
+import { Armor, Armor5 } from './Armor.js'
+import { Fine } from './Fine.js'
+import { Health, HealthMega } from './Health.js'
+import { setWorkDir } from './PathMgr.js'
+import { addResources } from './ResourceMgr.js'
 
 function drawMap(map, res, player) {	
 	const { cnv, ctx } = createCanvasCtx(map.header.mapSizeX * 32, map.header.mapSizeY * 16)
 	setContext(cnv, ctx)
 
-	const _devDrawBBox = false
+	const _devDrawBBox = 0
 
 	const canvas = cnv
 	document.body.appendChild(cnv)
 	globalThis.ctx = ctx
 	
-	const sgStatic   = new SpriteGrid(map.pal.img, 32, 16)
+	addResources(res)
 	
-	const sgItems    = new SpriteGrid(res.get('item').cnv, 32, 16)
-	
-	const sgArmors   = new SpriteGrid(res.get('armors').cnv, 32, 16, 40)
-	const sgaArmorsY = new SpriteGridAnim(sgArmors.slice(0 , 20), 12)
-	const sgaArmorsR = new SpriteGridAnim(sgArmors.slice(20, 40), 12)
+	const sgBricks   = new SpriteGrid(res.get('bricks_t').cnv, 32, 16)
+	const sgBricks2  = new SpriteGrid(res.get('bricks_t2').cnv, 32, 16)
+	const sgStatic   = map.pal ? 
+		new SpriteGrid(map.pal.img, 32, 16) :
+		sgBricks.concat(sgBricks2)
 
-	const sgaFineMap = Object.fromEntries(
-		[ [23, 'fine_regen'], [26, 'fine_quad'], [28, 'fine_invis'], [24, 'fine_battle'], [25, 'fine_haste'], [27, 'fine_fly'], ]
-		.map(v => [v[0], new SpriteGridAnim(
-			new SpriteGrid(res.get(v[1]).cnv, 37, 32, 20, 6),
-			12
-		)])
-	)
-	
-	const sgaFineMega = new SpriteGridAnim( new SpriteGrid(res.get('fine_mega').cnv, 32, 32, 15), 12 )
-
-
+	const drawFnList = []
 	map.bbb.map((row, y) => {
 		y = cnv.height - y*16 - 16
 		row.map((brickIndex, x) => {
 			x = x*32
+			const cx = x + 32/2
 			
 			if ( !brickIndex )
 				return
 			
 			if ( brickIndex >= 54 )
-				return new Brick(x, y, brickIndex, sgStatic)
+				return new Brick(cx, y, brickIndex, sgStatic)
+			
+			if ( (brickIndex >= 1 && brickIndex <= 1 + 6) )
+				return new Weapon(cx, y, brickIndex)
+			
+			if ( (brickIndex >= 8 && brickIndex <= 8 + 7) )
+				return new Ammo(cx, y, brickIndex)
+			
+			if ( brickIndex >= 23 && brickIndex <= 28 )
+				return new Fine(cx, y, brickIndex)
+			
+			if ( brickIndex >= 17 && brickIndex <= 18 )
+				return new Armor(cx, y, brickIndex)
+			
+			if ( brickIndex == 16 )
+				return new Armor5(cx, y, brickIndex)
+			
+			if ( brickIndex >= 19 && brickIndex <= 21 )
+				return new Health(cx, y, brickIndex)
 
-			if ( (brickIndex >= 1 && brickIndex <= 16) || (brickIndex >= 19 && brickIndex <= 21) )
-				return new Item(x+7, y, 32-14, 16-6, brickIndex, () => sgItems.draw(ctx, brickIndex, x, y))
-			
-			if ( sgaFineMap[brickIndex] )
-				return new Item(x+6, y+6, 32-6*2, 32-6*2, brickIndex, () => sgaFineMap[brickIndex].draw(ctx, x, y) )
-			
 			if ( brickIndex == 22 )
-				return new Item(x + 8, y, 16, 16, brickIndex, () => sgaFineMega.drawEx(ctx, x + 8, y, 16, 16) )
+				return new HealthMega(cx, y, brickIndex)
+
+			if ( brickIndex === 34 ) {
+				player.pos[0] = cx
+				player.pos[1] = y
+				return
+			}
 			
-			if ( brickIndex == 17 )
-				return new Item(x + 7, y, 18, 32, brickIndex, () => sgaArmorsY.draw(ctx, x, y + 8) )
-				
-			if ( brickIndex == 18 )
-				return new Item(x + 7, y, 18, 32, brickIndex, () => sgaArmorsR.draw(ctx, x, y + 8) )
-			
-			//bricksItem.push({ draw: () => ctx.fillText(brickIndex, x*32 + 16, y*16 + 8) })
-		})			
+			drawFnList.push(() => ctx.fillText(brickIndex, cx - 4, cnv.height - y - 16 + 12))
+		})
 	})
 	
 	const drawBackground = () => {
-		const bg = map.customBg ?? res.get('bg_' + map.header.bg)
+		const bgIndex = map.header.bg ? map.header.bg : 1
+		const bg = map.customBg ?? res.get('bg_' + bgIndex)
 		for(let y = 0; y < canvas.width; y += bg.cnv.width)
 			for(let x = 0; x < canvas.width; x += bg.cnv.width)
 				ctx.drawImage(bg.cnv, x, y)
@@ -100,22 +111,25 @@ function drawMap(map, res, player) {
 		drawBricksStatic()
 		drawBricksItem()
 		drawPlayers()
+		
+		drawFnList.map(f => f())
 	}
 	draw()
 }
 
 async function main() {
-	const resourcesDir = ( /127|local/i.test(location.hostname) ) ? './' : './resources/'
+	setWorkDir( /127|local/i.test(location.hostname) ? './' : './resources/' )
 		
 	const map = new Map()
-	await map.load( `${ resourcesDir }basenfk/maps/dm13-test.mapa `)
+	await map.load( `basenfk/maps/dm13-test.mapa `)
+	//await map.load( `basenfk/maps/test.mapa `)
 	
 	const resources = new ResourcesD()
-	await resources.load(`${ resourcesDir }basenfk/system/graph.d`)
-	await resources.load(`${ resourcesDir }basenfk/system/graph2.d`)	
+	await resources.load(`basenfk/system/graph.d`)
+	await resources.load(`basenfk/system/graph2.d`)	
 	
 	const playerModel = new PlayerModel()
-	await playerModel.load(`${ resourcesDir }basenfk/models/doom/dark.nmdl`)
+	await playerModel.load(`basenfk/models/doom/dark.nmdl`)
 
 	const player = new Player(playerModel)
 	

@@ -2,6 +2,7 @@
 import { fetchUint8Array, fetchText, getDirname, loadImageEx, createCanvasCtx } from './Utils/Utils.js'
 import { parse } from './lib/ini/index.js'
 import { RectTexture } from './Classes/Rect.js'
+import { getAbsPath } from './PathMgr.js'
 
 export class PlayerModel {
 	keysFull = ['walk', 'die', 'crouch', 'walkPower', 'crouchPower',]
@@ -9,11 +10,11 @@ export class PlayerModel {
 		const text = await fetchText(path)
 		const iniData = parse( text )
 		
-		this.dieTexPath = getDirname(path) + '/' + iniData.main.diebmp
-		this.walkTexPath = getDirname(path) + '/' + iniData.main.walkbmp
-		this.crouchTexPath = getDirname(path) + '/' + iniData.main.crouchbmp
-		this.walkPowerTexPath = getDirname(path) + '/' + iniData.main.walkpowerbmp
-		this.crouchPowerTexPath = getDirname(path) + '/' + iniData.main.crouchpowerupbmp
+		this.dieTexPath = getAbsPath( getDirname(path) + '/' + iniData.main.diebmp )
+		this.walkTexPath = getAbsPath( getDirname(path) + '/' + iniData.main.walkbmp )
+		this.crouchTexPath = getAbsPath( getDirname(path) + '/' + iniData.main.crouchbmp )
+		this.walkPowerTexPath = getAbsPath( getDirname(path) + '/' + iniData.main.walkpowerbmp )
+		this.crouchPowerTexPath = getAbsPath( getDirname(path) + '/' + iniData.main.crouchpowerupbmp )
 
         this.version = +iniData.main.version
         this.name = iniData.main.name 

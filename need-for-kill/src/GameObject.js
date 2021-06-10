@@ -31,8 +31,13 @@ export class GameObject {
 		drawLine(max[0], max[1], max[0], min[1])
 	}
 	
+	_onReleaseCbList = []
 	release() {
 		delGameObject(this)
+		this._onReleaseCbList.map(cb => cb())
+	}
+	onRelease(cb) {
+		this._onReleaseCbList.push(cb)
 	}
 }
 

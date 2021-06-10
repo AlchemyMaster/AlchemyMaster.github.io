@@ -2,6 +2,7 @@
 import { decompress } from './lib/bzip/index.js'
 import { fetchUint8Array, fetchText, getDirname, loadImageEx } from './Utils/Utils.js'
 import { MemoryRW } from './Classes/MemoryRW.js'
+import { getAbsPath } from './PathMgr.js'
 
 export async function parseMap(buf) {
 	const mrw = new MemoryRW(buf.buffer)
@@ -112,16 +113,19 @@ export class Map {
 	customBg = null
 	
 	async load(path) {
-		const map = await parseMap( await fetchUint8Array(path) )
+		const map = await parseMap( await fetchUint8Array(getAbsPath(path)) )
 		this.header = map.header
 		this.bbb = map.bbb
 		this.ddd = map.ddd
 		this.locations = map.locations
 		this.pal = map.pal
 		
+		if ( !(this.header.bg >= 1 && this.header.bg <= 8) )
+			this.header.bg = 1
+		
 		try {
 			this.customBg = {
-				cnv: await loadImageEx(getDirname(getDirname(path)) + '/custom/bg_' + this.header.bg + '.jpg')
+				cnv: await loadImageEx(getAbsPath(getDirname(getDirname(path)) + '/custom/bg_' + this.header.bg + '.jpg'))
 			}
 		} catch {
 		}
