@@ -7,7 +7,7 @@ import { getAbsPath } from './PathMgr.js'
 export class PlayerModel {
 	keysFull = ['walk', 'die', 'crouch', 'walkPower', 'crouchPower',]
 	async load(path) {
-		const text = await fetchText(path)
+		const text = await fetchText(getAbsPath(path))
 		const iniData = parse( text )
 		
 		this.dieTexPath = getAbsPath( getDirname(path) + '/' + iniData.main.diebmp )
