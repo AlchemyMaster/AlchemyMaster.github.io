@@ -1,5 +1,5 @@
 
-import { Howl } from './lib/Howlerjs/index.js'
+import { Howl } from './lib/howlerjs/index.js'
 import { getAbsPath } from './PathMgr.js'
 
 const soundsMap = {}
