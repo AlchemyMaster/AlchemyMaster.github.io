@@ -1,11 +1,18 @@
 
 import { GameObject } from './GameObject.js'
-import { drawSpriteCX, getFrameDeltaTimeSec } from './Render.js'
+import { drawSpriteCX, getFrameTimeSec, getFrameDeltaTimeSec, getFrameTime, getContext } from './Render.js'
 import * as vec2 from './lib/glmatrix/vec2.js'
 import { IDPlayer, IDBrick, IDItem } from './ObjectID.js'
 import { BBox } from './Classes/BBox.js'
 import { getCollisions, getCollisionsBBox } from './GameObjectMgr.js'
 import { playSound } from './SoundMgr.js'
+import { setTimeout } from './Render.js'
+import { getCacheResource, getResource } from './ResourceMgr.js'
+import { SpriteGrid } from './Classes/SpriteGrid.js'
+import { SpriteGridAnim } from './Classes/SpriteGridAnim.js'
+
+import { Bullet } from './Bullet.js'
+
 
 const PLAYER_STATE_IDLE       = 0b1
 const PLAYER_STATE_MOVE       = 0b10
@@ -47,16 +54,49 @@ const PlayerStateGroups = [
 ]
 
 export const PLAYER_CTRL_STATE = {
-	Up   : 0b1,
-	Down : 0b10,
-	Left : 0b100,
-	Right: 0b1000,
+	Up    : 0b1,
+	Down  : 0b10,
+	Left  : 0b100,
+	Right : 0b1000,
+	Attack: 0b10000,
 }
 
 globalThis.PLAYER_STATE = PLAYER_STATE
 globalThis.PLAYER_CTRL_STATE = PLAYER_CTRL_STATE
 
+class ActionLoop {
+	startTime = getFrameTimeSec()
+
+	update(numPerSec, callback) {
+		const reloadTime = 1 / numPerSec
+		
+		if ( this.startTime > getFrameTimeSec() )
+			return
+		
+		this.startTime = getFrameTimeSec() + reloadTime
+		callback()
+	}
+}
+
 export class Player extends GameObject {
+	sg = getCacheResource( 'Player_sdf34bfd', () => {
+		return new SpriteGrid(getResource('item').cnv, 32, 16)
+	})
+	sgWeapon = getCacheResource( 'PlayerWeapon_f39hte', () => {
+		const sg = new SpriteGrid(getResource('item').cnv, 32, 16)
+	})
+	
+	sgWeaponMgun = getCacheResource( 'PlayerWeaponMgun_h94jbnd', () => {
+		const sg = new SpriteGrid(getResource('mgun_ex').cnv, 39, 13, 1e9, 3)
+		const sgaExplositon = new SpriteGridAnim( new SpriteGrid(getResource('explosion').cnv, 32, 32, 8), 30 )
+		return {
+			base: sg.slice(0, 1),
+			attack: sg.slice(1, 1 + 6),
+			sgaExplositon
+		}
+	})
+	
+	
 	pos = { x: 0, y: 0}
 	playerModel = null
 	state = PLAYER_STATE_IDLE | PLAYER_STATE_LOOK_RIGHT | PLAYER_STATE_STANDING
@@ -240,8 +280,8 @@ export class Player extends GameObject {
 		this.updateExternalCollisions()
 	}
 
-	draw(ctx) {
-		this.update()
+	draw() {
+		//this.update()
 		
 		const now = Date.now()
 		const frameTime = now - this.prevFrameTime
@@ -259,5 +299,115 @@ export class Player extends GameObject {
 		const x = 32*6
 		const y = 16*16
 		drawSpriteCX(sprite, this.pos[0], this.pos[1])
+		
+		this.drawWeapon()
+	}
+	
+	weaponId = 1
+	weaponAngle = 0
+	addWeaponAngle(_weaponAngle) {
+		this.weaponAngle += _weaponAngle
+		this.weaponAngle = Math.min( Math.PI / 2, Math.max( -Math.PI / 2, this.weaponAngle ) )
+	}
+	
+	weaponStartAttackTime = 0
+	weaponNumAttackPerSec = 100
+	weaponAttackLoop = new ActionLoop()
+	weaponAttackAniSeq = 0
+	weaponAttackAniRate = 0
+	drawWeapon() {
+		let isWeaponAttack = false
+		if ( this.ctrlState & PLAYER_CTRL_STATE.Attack ) {
+			this.weaponAttackLoop.update(this.weaponNumAttackPerSec, () => {
+				isWeaponAttack = true
+			})
+		}
+		
+		const { ctx, cnv } = getContext()
+		
+		const height = this.state & PLAYER_STATE.Crouch ? 17 : 26
+		
+		const drawSpriteSimplie = sprite => {
+			ctx.drawImage(
+				sprite.texture, 
+				sprite.x, sprite.y, sprite.width, sprite.height,			
+				0,0, sprite.width, sprite.height
+			)
+		}
+		
+		
+		
+		let itemHeight = 13
+		ctx.save()
+
+		globalThis.__a = globalThis.__a|| 0
+		if ( globalThis.__a >= 90 ) globalThis.__da = -1
+		if ( globalThis.__a <= -90 ) globalThis.__da = 1
+		globalThis.__a += globalThis.__da || 1
+		
+		if ( this.state & PLAYER_STATE.LookLeft ) {
+			ctx.scale(-1, 1)
+			ctx.translate(-this.pos[0], 0)
+		} else {
+			ctx.translate( this.pos[0], 0)
+		}
+
+		ctx.translate(0, cnv.height - itemHeight - (this.pos[1] + height - 10) )
+		ctx.translate(-20, -5)
+
+		const [rx, ry] = [20, 5]
+		ctx.translate(+rx, +ry)
+		ctx.rotate(this.weaponAngle)
+		ctx.translate(-rx, -ry)
+
+		drawSpriteSimplie( this.sgWeaponMgun.base.frames[0] )
+		
+		if ( this.ctrlState & PLAYER_CTRL_STATE.Attack )
+			this.weaponAttackAniRate = 30
+		
+		
+		this.weaponAttackAniSeq += getFrameDeltaTimeSec() * this.weaponAttackAniRate
+		const i = Math.floor( this.weaponAttackAniSeq ) % this.sgWeaponMgun.attack.frames.length
+		drawSpriteSimplie( this.sgWeaponMgun.attack.frames[ i ] )
+		
+		this.weaponAttackAniRate /= 1.03
+		if ( this.weaponAttackAniRate < 15 )
+			this.weaponAttackAniRate = 0
+
+		if ( isWeaponAttack ) {
+			const sprite = this.sgWeaponMgun.sgaExplositon.spriteGrid.frames[ this.sgWeaponMgun.sgaExplositon.getFrameIndex() ]
+				
+			ctx.translate(35, 0)
+			
+			const [rx, ry] = [6, 6]
+			ctx.translate(+rx, +ry)
+			ctx.rotate(Math.PI * Math.random())
+			ctx.translate(-rx, -ry)
+			
+			ctx.drawImage(
+				sprite.texture, 
+				sprite.x, sprite.y, sprite.width, sprite.height,			
+				0,0, 12, 12
+			)
+		}
+
+
+
+		ctx.restore()
+
+		if ( isWeaponAttack )
+			this.weaponAttack()
+	}
+	weaponAttack() {
+		playSound('basenfk/sound/machine.wav')
+		
+		let a = ( this.state & PLAYER_STATE.LookLeft ) ? 
+			-this.weaponAngle - Math.PI : 
+			this.weaponAngle
+		
+		a += (Math.random() * 2 - 1) * Math.PI / 180 * 1
+		
+		const height = this.state & PLAYER_STATE.Crouch ? 19 : 28
+		new Bullet(this.pos[0], this.pos[1] + height, -a)
 	}
 }

@@ -41,10 +41,14 @@ export class Health extends Item {
 		if ( healthInfo.onUseMusic )
 			playSound(healthInfo.onUseMusic)
 		
-		this.release()
-		
+		this.destroy()
+	}
+	
+	destroy() {
+		const healthInfo = HealthInfoListByBrickIndexMap[ this.brickIndex ]
 		setTimeout(() => new Health(this.pos[0], this.pos[1], this.brickIndex), healthInfo.respawnTime)
-	}	
+		super.destroy()
+	}
 }
 
 export class HealthMega extends Item {
@@ -60,7 +64,10 @@ export class HealthMega extends Item {
 	
 	intersection(gameObject) {
 		playSound('basenfk/sound/health100.wav')		
-		this.release()
-		setTimeout(() => new HealthMega(this.pos[0], this.pos[1], this.brickIndex), 60e3)
+		this.destroy()
 	}	
+	destroy() {
+		setTimeout(() => new HealthMega(this.pos[0], this.pos[1], this.brickIndex), 60e3)
+		super.destroy()
+	}
 }

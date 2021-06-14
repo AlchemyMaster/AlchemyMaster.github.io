@@ -22,13 +22,14 @@ export class Armor extends Item {
 
 	intersection(gameObject) {
 		playSound('basenfk/sound/armor.wav')
-		this.release()
-
+		this.destroy()
+	}
+	destroy() {		
 		setTimeout(() => {
 			new Armor(this.pos[0], this.pos[1], this.brickIndex)
 		}, 30e3)
+		this.release()
 	}
-	
 }
 
 export class Armor5 extends Item {
@@ -43,12 +44,14 @@ export class Armor5 extends Item {
 	}
 
 	intersection(gameObject) {
-		playSound('basenfk/sound/ammopkup.wav')
-		this.release()
-
+		playSound('basenfk/sound/shard.wav')
+		this.destroy()
+	}
+	destroy() {	
 		setTimeout(() => {
 			new Armor5(this.pos[0], this.pos[1], this.brickIndex)
 		}, 20e3)
+		this.release()
 	}
 }
 

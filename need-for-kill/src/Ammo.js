@@ -18,6 +18,9 @@ export class Ammo extends Item {
 
 	intersection(gameObject) {
 		playSound('basenfk/sound/ammopkup.wav')
+		this.destroy()
+	}
+	destroy() {	
 		this.release()
 		
 		setTimeout(() => {

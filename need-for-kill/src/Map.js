@@ -64,7 +64,7 @@ export async function parseMap(buf) {
 
 	let pal = null
 	const locations = []
-	while( mrw.offset < mrw.dataView.byteLength ) {
+	while( mrw.offset < mrw.dataView.byteLength - 24 ) {
 		const mapEntry = readMapEntry()
 		switch( mapEntry.entryType ) {
 			case 'pal':
@@ -77,14 +77,12 @@ export async function parseMap(buf) {
 				break
 				
 			case 'loc':
-				if ( mrw.offset < mrw.dataView.byteLength ) {
-					locations.push({
-						enabled: mrw.readU8(),
-						x      : mrw.readU8(),
-						y      : mrw.readU8(),
-						text   : mrw.readDelphiString(64),
-					})
-				}
+				locations.push({
+					enabled: mrw.readU8(),
+					x      : mrw.readU8(),
+					y      : mrw.readU8(),
+					text   : mrw.readDelphiString(64),
+				})
 				break
 		}
 	}
@@ -125,7 +123,7 @@ export class Map {
 		
 		try {
 			this.customBg = {
-				cnv: await loadImageEx(getAbsPath(getDirname(getDirname(path)) + '/custom/bg_' + this.header.bg + '.jpg'))
+				cnv: await loadImageEx(getAbsPath('basenfk/custom/bg_' + this.header.bg + '.jpg'))
 			}
 		} catch {
 		}

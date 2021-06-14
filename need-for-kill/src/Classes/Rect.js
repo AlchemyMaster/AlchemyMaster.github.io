@@ -16,8 +16,8 @@ export class Rect {
 export class RectTexture extends Rect {
 	texture = null
 
-	constructor(texture, ...args) {
-		super(...args)
+	constructor(texture, x, y, w = texture.width, h = texture.height) {
+		super(x, y, w, h)
 		this.texture = texture
 	}
 }

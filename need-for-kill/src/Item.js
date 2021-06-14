@@ -10,21 +10,13 @@ export class Item extends GameObject {
 	brickIndex = 0
 	sgStatic = null
 
-	constructor(x, y, w, h, brickIndex, _draw) {
+	constructor(x, y, w, h, brickIndex) {
 		super(IDItem, [x, y], new BBox(x - w/2, y, x + w/2, y + h))
 
 		this.brickIndex = brickIndex
-		this._draw = _draw
-	}
-
-	draw() {
-		this._draw()
 	}
 
 	intersection(gameObject) {
-		//playSound('basenfk/sound/armor.wav')
-		//playSound('basenfk/sound/wpkup.wav')
-		//playSound('basenfk/sound/ammopkup.wav')
 		this.release()
 	}
 }

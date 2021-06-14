@@ -75,6 +75,9 @@ export class Fine extends Item {
 		if ( this.fineInfo.onUseMusic )
 			playSound(this.fineInfo.onUseMusic)
 		
+		this.destroy()
+	}
+	destroy() {	
 		this.release()
 		
 		setTimeout(() => {

@@ -17,7 +17,10 @@ export const setContext = (_cnv, _ctx) => {
 	height = cnv.height
 }
 
+export const getContext = () => ({ cnv, ctx })
+
 export const drawSprite = (sprite, dx, dy, dw = sprite.width, dh = sprite.height) => {
+	//return
 	ctx.drawImage(
 		sprite.texture,
 		sprite.x, sprite.y, sprite.width, sprite.height,
@@ -42,15 +45,18 @@ export const devDrawRect = (x, y, w, h) => {
 
 let prevFrameTime = Date.now() - 20
 let frameTime = Date.now()
+let frameTimeSec = frameTime/1e3
 let frameDeltaTime = 20
 let frameDeltaTimeSec = 0.02
 
 export const getFrameTime = () => frameTime
+export const getFrameTimeSec = () => frameTimeSec
 export const getFrameDeltaTime = () => frameDeltaTime
 export const getFrameDeltaTimeSec = () => frameDeltaTimeSec
 export const updateFrameTime = () => {
 	prevFrameTime = frameTime
 	frameTime = Date.now() 
+	frameTimeSec = frameTime / 1e3
 	frameDeltaTime = frameTime - prevFrameTime
 	frameDeltaTimeSec = frameDeltaTime / 1e3
 }

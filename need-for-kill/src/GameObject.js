@@ -11,6 +11,8 @@ export class GameObject {
 	pos = [0, 0]
 	bbox = new BBox()
 	
+	hp = 100
+	
 	constructor(objectID = 0, pos, bbox) {
 		this.objectID = objectID
 		this.pos = pos
@@ -38,6 +40,10 @@ export class GameObject {
 	}
 	onRelease(cb) {
 		this._onReleaseCbList.push(cb)
+	}
+	
+	destroy() {
+		this.release()
 	}
 }
 

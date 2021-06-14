@@ -66,6 +66,9 @@ export class Weapon extends Item {
 
 	intersection(gameObject) {
 		playSound('basenfk/sound/wpkup.wav')
+		this.destroy()
+	}
+	destroy() {	
 		this.release()
 		
 		setTimeout(() => {
