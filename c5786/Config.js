@@ -6,12 +6,17 @@ window.g_Config = {
 		protocol : null, /// 'http:' or 'https:'; если null то используется протокол страницы ( location.protocol )
 		host     : null, /// ip or domain(можно с портом); если null используется домен страницы ( location.host )
 		path_base: 'api/', /// префикс в pathname
+		
+		protocol: 'https:', host: 'bot.blackacornlabs.com',
 	},
 	
 	/// интервалы для обновления(в милисекундах).
 	/// по скольку нету веб сокетов, приложение обновляет раз в N мсек листы
 	/// и если есть изменения показывает их
 	updateIntervals: {
+		
+		/// синхронизация счетчика онлайна
+		sync_online_info: 10e3,
 		
 		/// обновление списока новых лидов
 		new_leads: 500,
@@ -32,6 +37,14 @@ window.g_Config = {
 		{ title: 'work', color: '#fff', background_color: '#ff9800', },
 		{ title: 'done', color: '#fff', background_color: '#4caf50', },
 		{ title: 'fail', color: '#fff', background_color: '#e91e63', },
+	],
+	
+	lead_StatusList: [
+		{ id: 'NW', title: 'New'    , access: 'system', },
+		{ id: 'IW', title: 'In work', access: 'user'  , }, 
+		{ id: 'FT', title: 'FTD'    , access: 'user'  , }, 
+		{ id: 'FU', title: 'Future' , access: 'user'  , },
+		{ id: 'DL', title: 'Delete' , access: 'user'  , },
 	],
 	
 }
