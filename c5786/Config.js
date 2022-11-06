@@ -3,11 +3,11 @@ window.g_Config = {
 	
 	/// путь для апи
 	api: {
-		protocol : null, /// 'http:' or 'https:'; если null то используется протокол страницы ( location.protocol )
-		host     : null, /// ip or domain(можно с портом); если null используется домен страницы ( location.host )
+		protocol : null  , /// 'http:' or 'https:'; если null то используется протокол страницы ( location.protocol )
+		host     : null  , /// ip or domain(можно с портом); если null используется домен страницы ( location.host )
 		path_base: 'api/', /// префикс в pathname
 		
-		protocol: 'https:', host: 'bot.blackacornlabs.com',
+		protocol : 'https:', host: 'bot.blackacornlabs.com',
 	},
 	
 	/// интервалы для обновления(в милисекундах).
@@ -46,5 +46,9 @@ window.g_Config = {
 		{ id: 'FU', title: 'Future' , access: 'user'  , },
 		{ id: 'DL', title: 'Delete' , access: 'user'  , },
 	],
+	
+	operatorSelf_CanSetOnline: true,
+	
+	testMode: true,	/// если true то реальный апи использоваться будет только с хешем #real-api
 	
 }
