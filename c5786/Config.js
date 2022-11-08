@@ -7,7 +7,7 @@ window.g_Config = {
 		host     : null  , /// ip or domain(можно с портом); если null используется домен страницы ( location.host )
 		path_base: 'api/', /// префикс в pathname
 		
-		protocol : 'https:', host: 'bot.blackacornlabs.com',
+		protocol : 'https:', host: 'binary.blackacornlabs.com:444',
 	},
 	
 	/// интервалы для обновления(в милисекундах).
