@@ -9,7 +9,7 @@ window.g_Config = {
 		
 		//protocol : 'https:', host: 'binary.blackacornlabs.com:444',
 		
-		attachments_OverwriteApiHostProtocol: true,
+		attachments_OverwriteApiHostProtocol: true,	/// перезапишет протокол/хост:пароль у url вложений на соотвествующие из конфига
 	},
 	
 	/// интервалы для обновления(в милисекундах).
@@ -42,12 +42,23 @@ window.g_Config = {
 	],
 	
 	lead_StatusList: [
-		{ id: 'NW', title: 'New'    , access: 'system', },
-		{ id: 'IW', title: 'In work', access: 'user'  , }, 
-		{ id: 'FT', title: 'FTD'    , access: 'user'  , }, 
-		{ id: 'FU', title: 'Future' , access: 'user'  , },
-		{ id: 'DL', title: 'Delete' , access: 'user'  , },
+		{ id: 'NW', title: 'New'    , access: 'system', bgColor: '#e6e6e6', color: '#000', stopPrevSearch: true, },
+		{ id: 'IW', title: 'In work', access: 'user'  , bgColor: '#fefe0a', color: '#000' },
+		{ id: 'RG', title: 'Reg'    , access: 'user'  , bgColor: '#5a9bd5', color: '#fff' },
+		{ id: 'FT', title: 'FTD'    , access: 'user'  , bgColor: '#70ad46', color: '#fff' },
+		{ id: 'DP', title: 'Dep'    , access: 'user'  , bgColor: '#76fd00', color: '#000' },
+		{ id: 'FL', title: 'Fail'   , access: 'user'  , bgColor: '#f10104', color: '#fff', protection: true , },
 	],
+	
+	lead_StatusJumpMap: {
+		NW: ['IW'],
+		IW: ['RG', 'FL'],
+		RG: ['FT', 'FL'],
+		FT: ['DP'],
+	},
+	
+	lead_StatusGetID        : lead => lead.is_fail ? 'Fl' : lead.status,
+	lead_StatusPrevIDResolve: (id, lead) => (id === 'FL') ? lead?.status : null,
 	
 	operatorSelf_CanSetOnline: true,
 	
