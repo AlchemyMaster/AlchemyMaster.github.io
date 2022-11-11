@@ -20,8 +20,8 @@ window.g_Config = {
 		/// синхронизация счетчика онлайна
 		sync_online_info: 10e3,
 		
-		/// обновление списока новых лидов
-		new_leads: 500,
+		/// обновление количества новых лидов
+		new_leads_count: 500,
 		
 		/// обновление списка диалогов(мои лиды)
 		/// обновляется текущее видимое окно с запасом с заданными фильтрами
@@ -56,8 +56,9 @@ window.g_Config = {
 		RG: ['FT', 'FL'],
 		FT: ['DP'],
 	},
+	lead_StatusNextListForUnkStatus: ['IW'],
 	
-	lead_StatusGetID        : lead => lead.is_fail ? 'Fl' : lead.status,
+	lead_StatusGetID        : lead => lead.is_fail ? 'FL' : lead.status,
 	lead_StatusPrevIDResolve: (id, lead) => (id === 'FL') ? lead?.status : null,
 	
 	operatorSelf_CanSetOnline: true,
