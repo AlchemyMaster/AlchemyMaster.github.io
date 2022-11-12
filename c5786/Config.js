@@ -7,8 +7,6 @@ window.g_Config = {
 		host     : null  , /// ip or domain(можно с портом); если null используется домен страницы ( location.host )
 		path_base: 'api/', /// префикс в pathname
 		
-		//protocol : 'https:', host: 'binary.blackacornlabs.com:444',
-		
 		attachments_OverwriteApiHostProtocol: true,	/// перезапишет протокол/хост:пароль у url вложений на соотвествующие из конфига
 	},
 	
