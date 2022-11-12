@@ -59,7 +59,7 @@ window.g_Config = {
 		FT: ['DP'],
 	},
 	lead_StatusNextListForUnkStatus: ['IW'],
-	lead_StatusFilterList: ['IW', 'RG', 'FT', 'DP', 'FL'],
+	lead_StatusFilterList: ['IW', 'RG', 'FT', 'DP',],
 	
 	lead_StatusGetID        : lead => lead.is_fail ? 'FL' : lead.status,
 	lead_StatusPrevIDResolve: (id, lead) => (id === 'FL') ? lead?.status : null,
