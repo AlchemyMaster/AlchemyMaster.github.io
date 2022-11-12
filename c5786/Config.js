@@ -47,7 +47,9 @@ window.g_Config = {
 		{ id: 'RG', title: 'Reg'    , access: 'user'  , bgColor: '#5a9bd5', color: '#fff' },
 		{ id: 'FT', title: 'FTD'    , access: 'user'  , bgColor: '#70ad46', color: '#fff' },
 		{ id: 'DP', title: 'Dep'    , access: 'user'  , bgColor: '#76fd00', color: '#000' },
-		{ id: 'FL', title: 'Fail'   , access: 'user'  , bgColor: '#f10104', color: '#fff', protection: true , },
+		{ id: 'FL', title: 'Fail'   , access: 'user'  , bgColor: '#f10104', color: '#fff', protectionModal: {
+			text: '¿Está segur de que quiere marcar la conversación con «Fail»? No podrá volver a conversar con el cliente.',
+		}},
 	],
 	
 	lead_StatusJumpMap: {
