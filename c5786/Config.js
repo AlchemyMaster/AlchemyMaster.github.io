@@ -45,6 +45,7 @@ window.g_Config = {
 		{ id: 'RG', title: 'Reg'    , access: 'user'  , bgColor: '#5a9bd5', color: '#fff' },
 		{ id: 'FT', title: 'FTD'    , access: 'user'  , bgColor: '#70ad46', color: '#fff' },
 		{ id: 'DP', title: 'Dep'    , access: 'user'  , bgColor: '#76fd00', color: '#000' },
+		{ id: 'NA', title: 'No answer', access: 'user'  , bgColor: '#f1010499', color: '#FFF' },
 		{ id: 'FL', title: 'Fail'   , access: 'user'  , bgColor: '#f10104', color: '#fff', protectionModal: {
 			text: '¿Está segur de que quiere marcar la conversación con «Fail»? No podrá volver a conversar con el cliente.',
 		}},
@@ -52,12 +53,12 @@ window.g_Config = {
 	
 	lead_StatusJumpMap: {
 		NW: ['IW'],
-		IW: ['RG', 'FL'],
-		RG: ['FT', 'FL'],
+		IW: ['RG', 'NA', 'FL'],
+		RG: ['FT', 'NA', 'FL'],
 		FT: ['DP'],
 	},
 	lead_StatusNextListForUnkStatus: ['IW'],
-	lead_StatusFilterList: ['IW', 'RG', 'FT', 'DP',],
+	lead_StatusFilterList: ['IW', 'RG', 'FT', 'DP', 'NA',],
 	
 	lead_StatusGetID        : lead => lead.is_fail ? 'FL' : lead.status,
 	lead_StatusPrevIDResolve: (id, lead) => (id === 'FL') ? lead.status : null,
